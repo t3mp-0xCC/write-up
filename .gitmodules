@@ -1,0 +1,3 @@
+[submodule "ctf4u/ctf4u"]
+	path = ctf4u/ctf4u
+	url = https://github.com/akiym/akictf2013
