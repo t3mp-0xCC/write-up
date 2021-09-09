@@ -1,4 +1,4 @@
-# NITIC CTF 2
+# SECCON Beginners 2021
 ## uma_catch
 ### 概要
 馬を捕まえて踊らせるプログラム。  
