@@ -6,8 +6,6 @@ lsとexit以外が通らないシェル。
 加えてPartical RELROなのでGOT Overwriteができる。  
 One-Gadgetに飛ばしてもいいが、printfのgotをsystemに書き換え、そのまま引数として'/bin/sh'を渡す方針で行く。  
 なんとなくカッコいいからだ。  
-~~ FSBでスタック内の__libc_start_mainをリークさせ、オフセットからlibc baseを求める。  ~~  
-不要。PIEが無効化されているのでアドレスのランダマイズがない。  
 
 バイナリからgotとpltの情報を得て書き換える。  
 しかしx64でのFSBはアドレスにNULLが入る関係で大変らしく、うまく通らなかったので、ライブラリに頼ることにした。  
