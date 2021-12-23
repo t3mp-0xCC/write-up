@@ -1,3 +1,6 @@
 [submodule "ctf4u/ctf4u"]
 	path = ctf4u/ctf4u
 	url = https://github.com/akiym/akictf2013
+[submodule "ctf4u/list"]
+	path = ctf4u/list
+	url = https://github.com/h4dla3/ctf4u
