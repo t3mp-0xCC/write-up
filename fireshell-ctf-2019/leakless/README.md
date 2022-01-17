@@ -9,3 +9,11 @@ ROPでGOTからlibcのアドレスをリークしてlibc databaseからlibcを�
 後はもう一度BOFできる関数を呼び出して、ret2libcでsystem関数を実行する。  
 
 write-upを調べていたら、libc databaseを使わずに解く方法もあるらしいので、後でこっちでも解いてみる。  
+## 解法 2(ret2dl-resolve)  
+今回の問題ではlibcの配布がされていない為、リークされたlibcのアドレスを元にlibcを特定する必要があった。  
+(解き終わってから気づいたので、上の解法では触れていない...)  
+このような場合、libc databseを用いてリンクしているlibcのバージョンを特定し、シンボルのオフセットを計算する必要がある。  
+しかしret2dl-resolveの手法を用いた場合、libcの種類を問わずにlibc内の任意の関数を実行する事ができる。  
+### _dl_runtime_resolve  
+`_dl_runtime_resolve`を始めとした関数はプログラム内で任意のlibcの関数を初めて呼ぶ際に使われる。  
+![backtrace](https://github.com/t3mp-0xCC/write-up/raw/main/fireshell-ctf-2019/leakless/dl-resolve_backtrace.png)  
