@@ -15,5 +15,9 @@ write-upを調べていたら、libc databaseを使わずに解く方法もあ�
 このような場合、libc databseを用いてリンクしているlibcのバージョンを特定し、シンボルのオフセットを計算する必要がある。  
 しかしret2dl-resolveの手法を用いた場合、libcの種類を問わずにlibc内の任意の関数を実行する事ができる。  
 ### _dl_runtime_resolve  
-`_dl_runtime_resolve`を始めとした関数はプログラム内で任意のlibcの関数を初めて呼ぶ際に使われる。  
-![backtrace](https://github.com/t3mp-0xCC/write-up/raw/main/fireshell-ctf-2019/leakless/dl-resolve_backtrace.png)  
+`_dl_runtime_resolve`を始めとした関数郡はプログラム内で任意のlibcの関数を初めて呼ぶ際に使われる。  
+(ただし遅延バインドが有効な場合(Partial RELRO)に限る。)  
+この関数郡は`.plt.got`セクションに関数の実態を持つlibcのアドレスを書き込むのに仕様され、書き込まれる前は一定の値が書き込まれている。  
+![backtrace](https://github.com/t3mp-0xCC/write-up/raw/main/fireshell-ctf-2019/leakless/dl-resolve_backtrace.png) 
+(実際にgdbで追ってみた時のバックトレース。)  
+参考: https://ypl.coffee/dl-resolve/  
