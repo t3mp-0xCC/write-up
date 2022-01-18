@@ -19,5 +19,6 @@ write-upを調べていたら、libc databaseを使わずに解く方法もあ�
 (ただし遅延バインドが有効な場合(Partial RELRO)に限る。)  
 この関数郡は`.plt.got`セクションに関数の実態を持つlibcのアドレスを書き込むのに仕様され、書き込まれる前は一定の値が書き込まれている。  
 ![backtrace](https://github.com/t3mp-0xCC/write-up/raw/main/fireshell-ctf-2019/leakless/dl-resolve_backtrace.png) 
+
 (実際にgdbで追ってみた時のバックトレース。)  
 参考: https://ypl.coffee/dl-resolve/  
