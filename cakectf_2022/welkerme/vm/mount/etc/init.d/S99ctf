@@ -1,0 +1,19 @@
+#!/bin/sh
+mdev -s
+mount -t proc none /proc
+stty -opost
+echo 0 > /proc/sys/kernel/kptr_restrict
+echo 0 > /proc/sys/kernel/dmesg_restrict
+
+## Install driver
+insmod /root/driver.ko
+mknod -m 666 /dev/welkerme c `grep welkerme /proc/devices | awk '{print $1;}'` 0
+
+## User shell
+echo -e "\nBoot took $(cut -d' ' -f1 /proc/uptime) seconds\n"
+echo "[ welkerme - CakeCTF 2022 ]"
+setsid cttyhack setuidgid 1337 sh
+
+## Cleanup
+umount /proc
+poweroff -d 0 -f
